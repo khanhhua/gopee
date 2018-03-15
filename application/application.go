@@ -1,11 +1,12 @@
 package application
 
 import (
+	"net/http"
+
 	"github.com/carbocation/interpose"
 	gorilla_mux "github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/spf13/viper"
-	"net/http"
 
 	"github.axa.com/axa-singapore-meetups/gopee/handlers"
 	"github.axa.com/axa-singapore-meetups/gopee/middlewares"
@@ -24,7 +25,7 @@ func New(config *viper.Viper) (*Application, error) {
 
 // Application is the application object that runs HTTP server.
 type Application struct {
-	config      *viper.Viper
+	config       *viper.Viper
 	sessionStore sessions.Store
 }
 
@@ -41,6 +42,7 @@ func (app *Application) mux() *gorilla_mux.Router {
 	router := gorilla_mux.NewRouter()
 
 	router.Handle("/", http.HandlerFunc(handlers.GetHome)).Methods("GET")
+	router.Handle("/pricer-content", http.HandlerFunc(handlers.GetPricerContent)).Methods("GET")
 
 	// Path of static files must be last!
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
