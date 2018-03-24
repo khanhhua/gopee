@@ -8,8 +8,8 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/spf13/viper"
 
-	"github.axa.com/axa-singapore-meetups/gopee/handlers"
-	"github.axa.com/axa-singapore-meetups/gopee/middlewares"
+	"github.com/khanhhua/gopee/handlers"
+	"github.com/khanhhua/gopee/middlewares"
 )
 
 // New is the constructor for Application struct.
@@ -42,7 +42,9 @@ func (app *Application) mux() *gorilla_mux.Router {
 	router := gorilla_mux.NewRouter()
 
 	router.Handle("/", http.HandlerFunc(handlers.GetHome)).Methods("GET")
-	router.Handle("/pricer-content", http.HandlerFunc(handlers.GetPricerContent)).Methods("GET")
+	router.Handle("/pricer", http.HandlerFunc(handlers.ViewPricer))
+	router.Handle("/pricer/upload", http.HandlerFunc(handlers.UploadPricer)).Methods("POST")
+	router.Handle("/pricer/query", http.HandlerFunc(handlers.GetPricerContent()))
 
 	// Path of static files must be last!
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))

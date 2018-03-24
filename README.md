@@ -7,7 +7,7 @@ README :: GoP - Pricer with GoLang
 
 2. Run the server
     ```
-    cd $GOPATH/src/github.axa.com/axa-singapore-meetups/gopee
+    cd $GOPATH/src/github.com/khanhhua/gopee
     go run main.go
     ```
 

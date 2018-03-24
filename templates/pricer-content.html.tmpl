@@ -1,11 +1,171 @@
 {{define "content"}}
 <div class="container">
-  <div class="row">
-    <div class="jumbotron">
-      <h1>GoPee - Pricer Content</h1>
-      <p>Upload your pricer XLSX</p>
-      <p>Result: {{.Result}}</p>
+  <div class="form" id="upload">
+    <div class="form-row">
+      <label for="upload">Upload</label>
+      <input type="file" class="form-control" id="filePricer" placeholder="Upload XLSX">
+      <p class="help-block">Upload your MS-EXCEL Pricer file</p>
+    </div>
+    <div class="form-row">
+      <button type="button" class="btn btn-primary" onclick="upload()">Save</button>
+    </div>
+  </div>
+  <form class="form hidden" id="parameters">
+    <fieldset>
+      <legend>Input Parameters</legend>
+    </fieldset>
+    <div class="form-row">
+      <div class="col">
+        <h4>Name</h4>
+      </div>
+      <div class="col">
+        <h4>Cell Address</h4>
+      </div>
+      <div class="col">
+        <h4>Value</h4>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col">
+        <input type="text" class="form-control" name="inputs[].name">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="inputs[].address">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="inputs[].value">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col">
+        <input type="text" class="form-control" name="inputs[].name">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="inputs[].address">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="inputs[].value">
+      </div>
+    </div>
+    <div class="row">
+      <legend class="col">Output Parameters</legend>
+    </div>
+    <div class="form-row">
+      <div class="col">
+        <h4>Name</h4>
+      </div>
+      <div class="col">
+        <h4>Cell Address</h4>
+      </div>
+      <div class="col">
+        <h4>Value</h4>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col">
+        <input type="text" class="form-control" name="outputs[].name">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="outputs[].address">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="outputs[].value">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col">
+        <input type="text" class="form-control" name="outputs[].name">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="outputs[].address">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="outputs[].value">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col">
+        <input type="text" class="form-control" name="outputs[].name">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="outputs[].address">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="outputs[].value">
+      </div>
+    </div>
+    <div class="form-row">
+      <button type="button" class="btn btn-primary" onclick="queryPricer()">Test</button>
     </div>
   </div>
 </div>
+<script>
+function upload() {
+  var xhr = new XMLHttpRequest();
+  var reader = new FileReader();
+  xhr.overrideMimeType('text\/plain; charset=x-user-defined');
+  xhr.open('POST', '/pricer/upload')
+
+  reader.onload = function (e) {
+    xhr.send(e.target.result)
+  }
+  xhr.onreadystatechange = function (e) {
+    if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+      console.log(xhr.responseText);
+
+      document.querySelector('#parameters').classList.remove('hidden')
+    }
+  }
+  var file = document.querySelector('#filePricer');
+  if (!file.files.length) {
+    return;
+  }
+  reader.readAsArrayBuffer(file.files[0]);
+}
+function savePricer() {
+
+}
+function queryPricer() {
+  var parameters = $('#parameters').serializeArray();
+  var data = parameters.reduce(function(acc, item, index) {
+    var splat = item.name.split('.');
+    var name = splat[1];
+    var value = item.value;
+    var lastItem, accumulator;
+    if (splat[0] === 'inputs[]') {
+      accumulator = acc.inputs;
+      lastItem = acc.inputs[acc.inputs.length - 1];
+    } else if (splat[0] === 'outputs[]') {
+      accumulator = acc.outputs;
+      lastItem = acc.outputs[acc.outputs.length - 1];
+    }
+
+    lastItem[name] = value;
+    if (splat[0] === 'inputs[]' && lastItem.name && lastItem.address && lastItem.value) {
+      accumulator.push({name:'',address:'',value:''})
+    } else if (splat[0] === 'outputs[]' && lastItem.name && lastItem.address) {
+      accumulator.push({name:'',address:'',value:''})
+    }
+
+    return acc
+  }, {
+    inputs: [{name:'',address:'',value:''}],
+    outputs: [{name:'',address:'',value:''}]
+  });
+
+  data.inputs = data.inputs.filter(function(item) {
+    return item.name && item.address && item.value;
+  });
+  data.outputs = data.outputs.filter(function(item) {
+    delete item.value
+    return item.name && item.address;
+  });
+
+  $.ajax('/pricer/query', {
+    method: 'POST',
+    data: JSON.stringify(data),
+    contentType: 'application/json'
+  });
+}
+</script>
 {{end}}

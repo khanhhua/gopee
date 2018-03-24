@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.axa.com/axa-singapore-meetups/gopee/libhttp"
+	"github.com/khanhhua/gopee/libhttp"
 	"html/template"
 	"net/http"
 )

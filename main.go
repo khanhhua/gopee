@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.axa.com/axa-singapore-meetups/gopee/application"
+	"github.com/khanhhua/gopee/application"
 )
 
 func newConfig() (*viper.Viper, error) {

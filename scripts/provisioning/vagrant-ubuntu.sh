@@ -21,5 +21,5 @@ fi
 
 GOPATH=/go go get github.com/tools/godep
 
-cd /go/src/github.axa.com/axa-singapore-meetups/gopee
+cd /go/src/github.com/khanhhua/gopee
 GOPATH=/go go get ./...
