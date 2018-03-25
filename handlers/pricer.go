@@ -23,24 +23,29 @@ func ViewPricer(w http.ResponseWriter, r *http.Request) {
 }
 
 func UploadPricer(w http.ResponseWriter, r *http.Request) {
+	var err error
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Printf("r: %v\n", r)
-	if body := r.Body; body == nil {
+
+	err = r.ParseMultipartForm(32 << 20)
+	if err != nil {
 		w.Write([]byte("error"))
 		return
-	} else if len := r.ContentLength; len == 0 {
-		defer body.Close()
+	}
+	file, _, fErr := r.FormFile("filePricer")
+	if fErr != nil {
+		w.Write([]byte("error"))
+		return
+	}
+
+	defer file.Close()
+	println("Saving to ./data/pricer.xlsx...")
+
+	if pricerFile, err := os.OpenFile("./data/pricer.xlsx", os.O_WRONLY|os.O_TRUNC, 0666); err != nil {
+		w.Write([]byte("perm_error"))
 		return
 	} else {
-		defer body.Close()
-		println("Saving to ./data/pricer.xlsx...")
-		if pricerFile, err := os.OpenFile("./data/pricer.xlsx", os.O_WRONLY|os.O_CREATE, 0666); err != nil {
-			w.Write([]byte("perm_error"))
-			return
-		} else {
-			io.Copy(pricerFile, body)
-			defer pricerFile.Close()
-		}
+		io.Copy(pricerFile, file)
+		defer pricerFile.Close()
 	}
 
 	w.Write([]byte("ok"))
@@ -84,7 +89,6 @@ func GetPricerContent() func(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			fmt.Printf("BODY: %v\n\n", mapping)
 			aInputs := mapping.(map[string]interface{})["inputs"].([]interface{})
 
 			for _, item := range aInputs {

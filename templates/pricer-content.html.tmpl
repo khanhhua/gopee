@@ -102,13 +102,9 @@
 <script>
 function upload() {
   var xhr = new XMLHttpRequest();
-  var reader = new FileReader();
   xhr.overrideMimeType('text\/plain; charset=x-user-defined');
   xhr.open('POST', '/pricer/upload')
 
-  reader.onload = function (e) {
-    xhr.send(e.target.result)
-  }
   xhr.onreadystatechange = function (e) {
     if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
       console.log(xhr.responseText);
@@ -120,7 +116,9 @@ function upload() {
   if (!file.files.length) {
     return;
   }
-  reader.readAsArrayBuffer(file.files[0]);
+  var formData = new FormData();
+  formData.append('filePricer', file.files[0])
+  xhr.send(formData)
 }
 function savePricer() {
 
