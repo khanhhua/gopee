@@ -61,7 +61,7 @@
         <h4>Value</h4>
       </div>
     </div>
-    <div class="form-row">
+    <div class="form-row output">
       <div class="col">
         <input type="text" class="form-control" name="outputs[].name">
       </div>
@@ -72,7 +72,7 @@
         <input type="text" class="form-control" name="outputs[].value">
       </div>
     </div>
-    <div class="form-row">
+    <div class="form-row output">
       <div class="col">
         <input type="text" class="form-control" name="outputs[].name">
       </div>
@@ -83,7 +83,7 @@
         <input type="text" class="form-control" name="outputs[].value">
       </div>
     </div>
-    <div class="form-row">
+    <div class="form-row output">
       <div class="col">
         <input type="text" class="form-control" name="outputs[].name">
       </div>
@@ -165,6 +165,13 @@ function queryPricer() {
     method: 'POST',
     data: JSON.stringify(data),
     contentType: 'application/json'
+  }).promise().then(function (data) {
+    $('.output').each(function (_, item) {
+      var address = $('[name="outputs[].address"]', item).val();
+      if (address in data) {
+        $('[name="outputs[].value"]', item).val(data[address]);
+      }
+    })
   });
 }
 </script>

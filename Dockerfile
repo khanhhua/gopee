@@ -19,4 +19,4 @@ WORKDIR /go/src/github.com/khanhhua/gopee
 RUN godep go build
 
 EXPOSE 8888
-CMD ./gopee
+CMD ./gopee > /dev/null
