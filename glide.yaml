@@ -1,0 +1,82 @@
+package: github.com/khanhhua/gopee
+import:
+- package: github.com/Sirupsen/logrus
+  version: 90150a8ed11b6ce285e77e8af2b0109559ce4777
+- package: github.com/carbocation/interpose
+  version: 723534742ba3bbda66268b735aaa41634468acc6
+- package: github.com/fsnotify/fsnotify
+  version: ^1.4.7
+- package: github.com/golang-collections/collections
+  version: 604e922904d35e97f98a774db7881f049cd8d970
+  subpackages:
+  - stack
+- package: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- package: github.com/gorilla/mux
+  version: 4dbd923b0c9e99ff63ad54b0e9705ff92d3cdb06
+- package: github.com/gorilla/securecookie
+  version: ^1.1.1
+- package: github.com/gorilla/sessions
+  version: a2f2a3de9a4a575047f73e3e36bc85ecc3546391
+- package: github.com/hashicorp/hcl
+  version: f40e974e75af4e271d97ce0fc917af5898ae7bda
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/printer
+  - hcl/scanner
+  - hcl/strconv
+  - hcl/token
+  - json/parser
+  - json/scanner
+  - json/token
+- package: github.com/jmoiron/sqlx
+  version: cf35089a197953c69420c8d0cecda90809764b1d
+  subpackages:
+  - reflectx
+- package: github.com/khanhhua/formula1
+  version: 053156d14bb3b301278520e4d9be925987cf4b32
+  subpackages:
+  - engine
+  - formula
+  - funs
+- package: github.com/magiconair/properties
+  version: 2c9e9502788518c97fe44e8955cd069417ee89df
+- package: github.com/mitchellh/mapstructure
+  version: 00c29f56e2386353d58c599509e8dc3801b0d716
+- package: github.com/pelletier/go-toml
+  version: 66540cf1fcd2c3aee6f6787dfa32a6ae9a870f12
+- package: github.com/spf13/afero
+  version: a880a37ed1804d98f64b3b7d58b5e3f8fbf421c4
+  subpackages:
+  - mem
+- package: github.com/spf13/cast
+  version: ^1.2.0
+- package: github.com/spf13/jwalterweatherman
+  version: 7c0cea34c8ece3fbeb2b27ab9b59511d360fb394
+- package: github.com/spf13/pflag
+  version: ee5fd03fd6acfd43e44aea0b4135958546ed8e73
+- package: github.com/spf13/viper
+  version: ^1.0.2
+- package: github.com/tealeg/xlsx
+  version: d40e2bb185733dd4bc3c4a1929c35ee844ed3379
+- package: github.com/tylerb/graceful
+  version: d72b0151351a13d0421b763b88f791469c4f5dc7
+- package: github.com/xuri/efp
+  version: 46a471783255b4495fa45e2c4c3cf7fe0fa13f39
+- package: golang.org/x/crypto
+  version: 88942b9c40a4c9d203b82b3731787b672d6e809b
+  subpackages:
+  - ssh/terminal
+- package: golang.org/x/sys
+  version: 91ee8cde435411ca3f1cd365e8f20131aed4d0a1
+  subpackages:
+  - unix
+  - windows
+- package: golang.org/x/text
+  version: ab48842968a66deafa354805a8b031924668e059
+  subpackages:
+  - transform
+  - unicode/norm
+- package: gopkg.in/yaml.v2
+  version: ^2.1.1
