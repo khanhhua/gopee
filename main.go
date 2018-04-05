@@ -20,6 +20,9 @@ func newConfig() (*viper.Viper, error) {
 	c.SetDefault("http_key_file", "")
 	c.SetDefault("http_drain_interval", "1s")
 
+	c.SetDefault("dropbox_apikey", "j4365xi2ynl3zri")
+	c.SetDefault("dropbox_secret", "7e9j352ahi7hu8v")
+
 	c.AutomaticEnv()
 
 	return c, nil
