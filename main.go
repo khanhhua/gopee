@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/tylerb/graceful"
-	"net/http"
-	"time"
 
 	"github.com/khanhhua/gopee/application"
 )
@@ -13,7 +15,7 @@ import (
 func newConfig() (*viper.Viper, error) {
 	c := viper.New()
 	c.SetDefault("cookie_secret", "9e9DMq498fJOA2MB")
-	c.SetDefault("http_addr", ":8888")
+	c.SetDefault("port", "8888")
 	c.SetDefault("http_cert_file", "")
 	c.SetDefault("http_key_file", "")
 	c.SetDefault("http_drain_interval", "1s")
@@ -39,7 +41,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	serverAddress := config.Get("http_addr").(string)
+	serverAddress := fmt.Sprintf(":%s", config.Get("port").(string))
 
 	certFile := config.Get("http_cert_file").(string)
 	keyFile := config.Get("http_key_file").(string)
