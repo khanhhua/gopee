@@ -16,6 +16,8 @@ ENV COOKIE_SECRET 9e9DMq498fJOA2MB
 
 WORKDIR /go/src/github.com/khanhhua/gopee
 
+RUN mkdir data
+RUN godep get 
 RUN godep go build
 
 EXPOSE 8888

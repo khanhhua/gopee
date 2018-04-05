@@ -2,6 +2,9 @@
 	"ImportPath": "github.com/khanhhua/gopee",
 	"GoVersion": "go1.10",
 	"GodepVersion": "v80",
+	"Packages": [
+		"."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/Sirupsen/logrus",

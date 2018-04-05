@@ -40,8 +40,8 @@ func UploadPricer(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 	println("Saving to ./data/pricer.xlsx...")
 
-	if pricerFile, err := os.OpenFile("./data/pricer.xlsx", os.O_WRONLY|os.O_TRUNC, 0666); err != nil {
-		w.Write([]byte("perm_error"))
+	if pricerFile, err := os.OpenFile("./data/pricer.xlsx", os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0755); err != nil {
+		w.Write([]byte(err.Error()))
 		return
 	} else {
 		io.Copy(pricerFile, file)
