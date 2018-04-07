@@ -16,6 +16,15 @@ type Client struct {
 	DropboxAccessToken string
 }
 
+type FuncSpec struct {
+	ID                 int64
+	DropboxAccountID   string
+	DropboxAccessToken string
+	FnName             string
+	XlsxFile           string
+}
+
+// CreateClient Persists a new client
 func CreateClient(client Client) (ret Client, err error) {
 	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
 	if dberr != nil {
@@ -41,5 +50,29 @@ func CreateClient(client Client) (ret Client, err error) {
 	}
 
 	ret = client
+	return
+}
+
+// GetFuncByName Gets function by name
+func GetFuncByName(clientKey string, fnName string) (ret FuncSpec, err error) {
+	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
+	if dberr != nil {
+		err = dberr
+		return
+	}
+	defer db.Close()
+
+	var row *sql.Row
+	row = db.QueryRow(`SELECT xlsx_file, dropbox_account_id, dropbox_access_token
+			FROM funs
+			JOIN clients ON funs.client_key = clients.client_key
+			WHERE funs.client_key = ? AND funs.fn_name = ?`,
+		clientKey, fnName)
+
+	if err = row.Scan(&ret.XlsxFile, &ret.DropboxAccountID, &ret.DropboxAccessToken); err != nil {
+		return
+	}
+	ret.FnName = fnName
+
 	return
 }

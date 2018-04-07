@@ -43,7 +43,7 @@ func (app *Application) mux() *gorilla_mux.Router {
 
 	router.Handle("/", http.HandlerFunc(handlers.GetHome)).Methods("GET")
 	router.Handle("/console", http.HandlerFunc(handlers.ViewConsole))
-	router.Handle("/api/run", http.HandlerFunc(handlers.GetPricerContent()))
+	router.Handle("/api/call/{fnName}", http.HandlerFunc(handlers.Call))
 
 	router.Handle("/auth/dropbox", http.HandlerFunc(handlers.Authorize)).Methods("GET")
 	// Path of static files must be last!
