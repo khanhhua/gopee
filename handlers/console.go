@@ -16,9 +16,9 @@ type Page struct {
 	Result string
 }
 
-func ViewPricer(w http.ResponseWriter, r *http.Request) {
+func ViewConsole(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	tmpl, _ := template.ParseFiles("templates/dashboard.html.tmpl", "templates/pricer-content.html.tmpl")
+	tmpl, _ := template.ParseFiles("templates/dashboard.html.tmpl", "templates/console.html.tmpl")
 	tmpl.Execute(w, nil)
 }
 

@@ -1,0 +1,116 @@
+hash: ddbbb36984b4e94ae70ae7481a2b963025e77befb4aaf118ac13273d8a80ddf8
+updated: 2018-04-08T07:53:13.097478+08:00
+imports:
+- name: github.com/carbocation/interpose
+  version: 723534742ba3bbda66268b735aaa41634468acc6
+- name: github.com/dropbox/dropbox-sdk-go-unofficial
+  version: 81ac5b288ffc03b166174f520cdc0b227461450e
+  subpackages:
+  - dropbox
+  - dropbox/async
+  - dropbox/file_properties
+  - dropbox/files
+- name: github.com/fsnotify/fsnotify
+  version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
+- name: github.com/go-sql-driver/mysql
+  version: a0583e0143b1624142adab07e0e97fe106d99561
+- name: github.com/golang-collections/collections
+  version: 604e922904d35e97f98a774db7881f049cd8d970
+  subpackages:
+  - stack
+- name: github.com/golang/protobuf
+  version: e09c5db296004fbe3f74490e84dcd62c3c5ddb1b
+  subpackages:
+  - proto
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/mux
+  version: 4dbd923b0c9e99ff63ad54b0e9705ff92d3cdb06
+- name: github.com/gorilla/securecookie
+  version: e59506cc896acb7f7bf732d4fdf5e25f7ccd8983
+- name: github.com/gorilla/sessions
+  version: a2f2a3de9a4a575047f73e3e36bc85ecc3546391
+- name: github.com/hashicorp/hcl
+  version: f40e974e75af4e271d97ce0fc917af5898ae7bda
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/printer
+  - hcl/scanner
+  - hcl/strconv
+  - hcl/token
+  - json/parser
+  - json/scanner
+  - json/token
+- name: github.com/jmoiron/sqlx
+  version: cf35089a197953c69420c8d0cecda90809764b1d
+  subpackages:
+  - reflectx
+- name: github.com/khanhhua/formula1
+  version: 053156d14bb3b301278520e4d9be925987cf4b32
+  subpackages:
+  - engine
+  - formula
+  - funs
+- name: github.com/magiconair/properties
+  version: 2c9e9502788518c97fe44e8955cd069417ee89df
+- name: github.com/mitchellh/mapstructure
+  version: 00c29f56e2386353d58c599509e8dc3801b0d716
+- name: github.com/pelletier/go-toml
+  version: 66540cf1fcd2c3aee6f6787dfa32a6ae9a870f12
+- name: github.com/Sirupsen/logrus
+  version: 90150a8ed11b6ce285e77e8af2b0109559ce4777
+- name: github.com/spf13/afero
+  version: a880a37ed1804d98f64b3b7d58b5e3f8fbf421c4
+  subpackages:
+  - mem
+- name: github.com/spf13/cast
+  version: 8965335b8c7107321228e3e3702cab9832751bac
+- name: github.com/spf13/jwalterweatherman
+  version: 7c0cea34c8ece3fbeb2b27ab9b59511d360fb394
+- name: github.com/spf13/pflag
+  version: ee5fd03fd6acfd43e44aea0b4135958546ed8e73
+- name: github.com/spf13/viper
+  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
+- name: github.com/tealeg/xlsx
+  version: d40e2bb185733dd4bc3c4a1929c35ee844ed3379
+- name: github.com/tylerb/graceful
+  version: d72b0151351a13d0421b763b88f791469c4f5dc7
+- name: github.com/xuri/efp
+  version: 46a471783255b4495fa45e2c4c3cf7fe0fa13f39
+- name: golang.org/x/crypto
+  version: 88942b9c40a4c9d203b82b3731787b672d6e809b
+  subpackages:
+  - ssh/terminal
+- name: golang.org/x/net
+  version: 61147c48b25b599e5b561d2e9c4f3e1ef489ca41
+  subpackages:
+  - context
+  - context/ctxhttp
+- name: golang.org/x/oauth2
+  version: 921ae394b9430ed4fb549668d7b087601bd60a81
+  subpackages:
+  - internal
+- name: golang.org/x/sys
+  version: 91ee8cde435411ca3f1cd365e8f20131aed4d0a1
+  subpackages:
+  - unix
+  - windows
+- name: golang.org/x/text
+  version: ab48842968a66deafa354805a8b031924668e059
+  subpackages:
+  - transform
+  - unicode/norm
+- name: google.golang.org/appengine
+  version: 0a24098c0ec68416ec050f567f75df563d6b231e
+  subpackages:
+  - internal
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
+- name: gopkg.in/yaml.v2
+  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
+testImports: []
