@@ -41,19 +41,32 @@ func CreateClient(client Client) (ret Client, err error) {
 	defer db.Close()
 	// Insert into table clients and return the latest ID
 	var result sql.Result
-	result, dberr = db.Exec("INSERT INTO clients (client_key, domain, dropbox_account_id, dropbox_access_token) VALUES (?, ?, ?, ?)",
-		client.ClientKey,
-		client.ClientDomain,
-		client.DropboxAccountID,
-		client.DropboxAccessToken)
-	if dberr != nil {
-		err = dberr
-		return
-	}
-	client.ID, dberr = result.LastInsertId()
-	if dberr != nil {
-		err = dberr
-		return
+	row := db.QueryRow(`SELECT id FROM clients where client_key = ?`, client.ClientKey)
+	if dberr = row.Scan(&client.ID); dberr == nil { // Do update
+		result, dberr = db.Exec("UPDATE clients SET domain = ?, dropbox_account_id = ?, dropbox_access_token = ? WHERE id = ?",
+			client.ClientDomain,
+			client.DropboxAccountID,
+			client.DropboxAccessToken,
+			client.ID)
+		if dberr != nil {
+			err = dberr
+			return
+		}
+	} else { // Do insert
+		result, dberr = db.Exec("INSERT INTO clients (client_key, domain, dropbox_account_id, dropbox_access_token) VALUES (?, ?, ?, ?)",
+			client.ClientKey,
+			client.ClientDomain,
+			client.DropboxAccountID,
+			client.DropboxAccessToken)
+		if dberr != nil {
+			err = dberr
+			return
+		}
+		client.ID, dberr = result.LastInsertId()
+		if dberr != nil {
+			err = dberr
+			return
+		}
 	}
 
 	ret = client

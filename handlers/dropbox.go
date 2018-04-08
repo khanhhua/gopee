@@ -6,12 +6,14 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/khanhhua/gopee/dao"
 )
 
 // Authorize Dropbox OAuth2 callback
 func Authorize(w http.ResponseWriter, r *http.Request) {
+	BASE_URL := os.Getenv("BASE_URL")
 	var code string
 
 	if code = r.URL.Query().Get("code"); len(code) == 0 {
@@ -26,7 +28,7 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	form.Add("grant_type", "authorization_code")
 	form.Add("client_id", "j4365xi2ynl3zri")
 	form.Add("client_secret", "7e9j352ahi7hu8v")
-	form.Add("redirect_uri", "http://localhost:8888/auth/dropbox")
+	form.Add("redirect_uri", fmt.Sprintf("%s/auth/dropbox", BASE_URL))
 
 	type AuthResponse struct {
 		AccessToken string `json:"access_token"`
@@ -63,7 +65,7 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Printf("Generated client: %v\n", client)
-		http.Redirect(w, r, "http://localhost:8888/console", 301)
+		http.Redirect(w, r, fmt.Sprintf("%s/console", BASE_URL), 301)
 	} else {
 		http.Error(w, "Authorization error", 403)
 	}
