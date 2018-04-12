@@ -9,8 +9,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-const CLEARDB_DATABASE_URL = "b804b4e297b1f3:3575f604@tcp(us-cdbr-iron-east-05.cleardb.net:3306)/heroku_5b0142bce7e674e"
-
 type Client struct {
 	ID                 int64
 	ClientKey          string
