@@ -1,3 +1,7 @@
 language: go
 go:
-  - "1.10"
+  - '1.10'
+env:
+  global:
+    - secure: >-
+        PyTKz4KrdWVMg5mepWdb//DLgaz0z90hPZ8+UhP2pMDNbzdxUwfz6J+B+2QOC8fPP56uYZXqy9LKb6Ru7zzlHwzC/bTMI0DtFiJByBzRVekpJ0B8kHIRhk0nTIAokYy1HmxKe74BmesUMUs8yNZajb7IEPvIIKeF2JljrfE5fLLrhJRAyZOIN8YECAlsYSNJ6O1IoHGJpgsFMED56gL/wVWU5515byDBcEDpyObOMgkv+cD/VC9sXwWlXmPFaeoTKYTa43zWHOBd+iYmcRGaj5iIXWJID9Vt5mmp7IZHQsR4IjoE5+Xf0bxXbkQc0uIcvmA1YRlJck5/7vPwygJUi2pY6XtPL2A1tR1hW8oeyup1UVevMbHfvOe/aesHyjY/5rMEkrKYb20kOs6fBQ2DWrXblKe2ri80fhbzPkDCGIl/2TSPK6ixn684j1FF0lmaisrFweiAo0iDBYJUXAU8IX99WzYE6lzEuVlOtINgiOIW0kn22Sqyfo4P/yC6CMcpwmd9qsxdMR1EFc7tE+BCpTg311E8phjcIKjhtLFZBFdXomCzk0tbqlV+wLKIv/uhC8zukvttBqZ57ui+zrFwg520UDkd+icT6UOjhies4N/5WnrAN0huNCRw8S6QYcYggbP24ZhA8ez0rN3h0PqPZYPb1xSVAELUrgL8NdiRAqg=
