@@ -114,3 +114,46 @@ func GetFuncByName(clientKey string, fnName string) (ret FuncSpec, err error) {
 
 	return
 }
+
+// CreateFunc Register a new function named fnName
+func CreateFunc(clientKey string, fnName string, xlsxFile string,
+	inputMappings map[string]string, outputMappings map[string]string) (id int64, err error) {
+	CLEARDB_DATABASE_URL := os.Getenv("CLEARDB_DATABASE_URL")
+
+	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
+	if dberr != nil {
+		err = dberr
+		return
+	}
+	defer db.Close()
+
+	im := make([]string, 0)
+	for key, value := range inputMappings {
+		im = append(im, fmt.Sprintf("%s=%s", key, value))
+	}
+	serializedIM := strings.Join(im, ";")
+
+	om := make([]string, 0)
+	for key, value := range inputMappings {
+		om = append(om, fmt.Sprintf("%s=%s", key, value))
+	}
+	serializedOM := strings.Join(om, ";")
+
+	var result sql.Result
+
+	result, dberr = db.Exec(`INSERT INTO
+		funs   (client_id, fn_name, xlsx_file, input_mappings, output_mappings)
+	 	VALUES ((SELECT id FROM clients WHERE clients.client_key = ?), ?, ?, ?, ?)`,
+		clientKey, fnName, xlsxFile, serializedIM, serializedOM)
+	if dberr != nil {
+		err = dberr
+		return
+	}
+
+	id, dberr = result.LastInsertId()
+	if dberr != nil {
+		err = dberr
+		return
+	}
+	return
+}
