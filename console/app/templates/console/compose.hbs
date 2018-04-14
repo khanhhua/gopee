@@ -1,0 +1,64 @@
+<div class="twelve wide column">
+  <h2>Compose Function</h2>
+
+  <div class="ui form">
+    <div class="field">
+      <label>Function name</label>
+      {{input value=model.fnName placeholder="getPremium"}}
+    </div>
+    <div class="field">
+      <label>Excel file</label>
+      {{input value=model.xlsxName placeholder="/promo-2018-04-30.xlsx"}}
+    </div>
+
+    <div class="field">
+      <label>Input parameters</label>
+      {{#each model.inputMappings as |mapping index| }}
+      <div class="inline fields">
+        <div class="eight wide field">
+          <label>API name</label>
+          {{input value=mapping.name type="text" placeholder="family"}}
+        </div>
+        <div class="seven wide field">
+          <label>Address</label>
+          {{input value=mapping.address type="text" placeholder="Input!B2"}}
+        </div>
+        <div class="one wide field">
+          <button class="ui red compact icon button" {{action "removeInputMapping" index}}>
+            <i class="icon minus"></i>
+          </button>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    <div class="field">
+      <button class="mini ui button" {{action "addInputMapping"}}>Add input parameter</button>
+    </div>
+
+    <div class="field">
+      <label>Output parameters</label>
+      {{#each model.outputMappings as |mapping index| }}
+      <div class="inline fields">
+        <div class="eight wide field">
+          <label>API name</label>
+          {{input value=mapping.name type="text" placeholder="premium"}}
+        </div>
+        <div class="seven wide field">
+          <label>Address</label>
+          {{input value=mapping.address type="text" placeholder="Output!B14"}}
+        </div>
+        <div class="one wide field">
+          <button class="ui red compact icon button" {{action "removeOutputMapping" index}}>
+            <i class="icon minus"></i>
+          </button>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    <div class="field">
+      <button class="mini ui button" {{action "addOutputMapping"}}>Add ouput parameter</button>
+    </div>
+
+    <button class="ui primary button" {{action "save" model}}>Save</button>
+  </div>
+</div>

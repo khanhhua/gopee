@@ -17,6 +17,23 @@ import (
 	xlsx "github.com/tealeg/xlsx"
 )
 
+type param struct {
+	Name    string `json:"name"`
+	Address string `json:"address"`
+}
+
+type fun struct {
+	ID             int64   `json:"id"`
+	FnName         string  `json:"fnName"`
+	XlsxName       string  `json:"xlsxName"`
+	InputMappings  []param `json:"inputMappings"`
+	OutputMappings []param `json:"outputMappings"`
+}
+
+var payload struct {
+	Fun fun `json:"fun"`
+}
+
 // Compose composes function
 func Compose(w http.ResponseWriter, r *http.Request) {
 	var err error
@@ -25,14 +42,6 @@ func Compose(w http.ResponseWriter, r *http.Request) {
 	if len(clientKey) == 0 {
 		http.Error(w, "Not authorized", 403)
 		return
-	}
-
-	var payload struct {
-		ID             int64             `json:"id"`
-		FnName         string            `json:"fnName"`
-		XlsxName       string            `json:"xlsxName"`
-		InputMappings  map[string]string `json:"inputMappings"`
-		OutputMappings map[string]string `json:"outputMappings"`
 	}
 
 	if data, err = ioutil.ReadAll(r.Body); err != nil {
@@ -46,17 +55,28 @@ func Compose(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var id int64
-	if id, err = dao.CreateFunc(clientKey, payload.FnName, payload.XlsxName,
-		payload.InputMappings, payload.OutputMappings); err != nil {
+	f := payload.Fun
+	if id, err = dao.CreateFunc(clientKey, f.FnName, f.XlsxName,
+		paramDeclarationsToMappings(f.InputMappings),
+		paramDeclarationsToMappings(f.OutputMappings)); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	} else {
-		payload.ID = id
+		payload.Fun.ID = id
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(payload)
+}
+
+func paramDeclarationsToMappings(params []param) map[string]string {
+	ret := make(map[string]string)
+	for _, p := range params {
+		ret[p.Name] = p.Address
+	}
+
+	return ret
 }
 
 // Call calls a precomposed function
