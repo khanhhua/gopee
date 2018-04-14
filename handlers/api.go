@@ -17,6 +17,48 @@ import (
 	xlsx "github.com/tealeg/xlsx"
 )
 
+// Compose composes function
+func Compose(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var data []byte
+	clientKey := r.Header.Get("x-client-key")
+	if len(clientKey) == 0 {
+		http.Error(w, "Not authorized", 403)
+		return
+	}
+
+	var payload struct {
+		ID             int64             `json:"id"`
+		FnName         string            `json:"fnName"`
+		XlsxName       string            `json:"xlsxName"`
+		InputMappings  map[string]string `json:"inputMappings"`
+		OutputMappings map[string]string `json:"outputMappings"`
+	}
+
+	if data, err = ioutil.ReadAll(r.Body); err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	if err = json.Unmarshal(data, &payload); err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	var id int64
+	if id, err = dao.CreateFunc(clientKey, payload.FnName, payload.XlsxName,
+		payload.InputMappings, payload.OutputMappings); err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	} else {
+		payload.ID = id
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(payload)
+}
+
 // Call calls a precomposed function
 func Call(w http.ResponseWriter, r *http.Request) {
 	clientKey := r.Header.Get("x-client-key")
