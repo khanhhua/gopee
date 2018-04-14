@@ -8,12 +8,12 @@
     </div>
     <div class="field">
       <label>Excel file</label>
-      {{input value=model.xlsxName placeholder="/promo-2018-04-30.xlsx"}}
+      {{input value=model.xlsxFile placeholder="/promo-2018-04-30.xlsx"}}
     </div>
 
     <div class="field">
       <label>Input parameters</label>
-      {{#each model.inputMappings as |mapping index| }}
+      {{#each model.inputParams as |mapping index| }}
       <div class="inline fields">
         <div class="eight wide field">
           <label>API name</label>
@@ -37,7 +37,7 @@
 
     <div class="field">
       <label>Output parameters</label>
-      {{#each model.outputMappings as |mapping index| }}
+      {{#each model.outputParams as |mapping index| }}
       <div class="inline fields">
         <div class="eight wide field">
           <label>API name</label>

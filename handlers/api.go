@@ -23,15 +23,40 @@ type param struct {
 }
 
 type fun struct {
-	ID             int64   `json:"id"`
-	FnName         string  `json:"fnName"`
-	XlsxName       string  `json:"xlsxName"`
-	InputMappings  []param `json:"inputMappings"`
-	OutputMappings []param `json:"outputMappings"`
+	ID           int64   `json:"id"`
+	FnName       string  `json:"fnName"`
+	XlsxFile     string  `json:"xlsxFile"`
+	InputParams  []param `json:"inputParams"`
+	OutputParams []param `json:"outputParams"`
 }
 
-var payload struct {
-	Fun fun `json:"fun"`
+// Get Query for functions
+func Get(w http.ResponseWriter, r *http.Request) {
+	clientKey := r.Header.Get("x-client-key")
+	if len(clientKey) == 0 {
+		http.Error(w, "Not authorized", 403)
+		return
+	}
+
+	if funs, err := dao.FindFuns(clientKey); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	} else {
+		var payload struct {
+			Funs []fun `json:"funs"`
+		}
+		for _, f := range funs {
+			payload.Funs = append(payload.Funs, fun{
+				ID:       f.ID,
+				FnName:   f.FnName,
+				XlsxFile: f.XlsxFile,
+			})
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(payload)
+	}
 }
 
 // Compose composes function
@@ -49,6 +74,10 @@ func Compose(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var payload struct {
+		Fun fun `json:"fun"`
+	}
+
 	if err = json.Unmarshal(data, &payload); err != nil {
 		http.Error(w, err.Error(), 400)
 		return
@@ -56,9 +85,9 @@ func Compose(w http.ResponseWriter, r *http.Request) {
 
 	var id int64
 	f := payload.Fun
-	if id, err = dao.CreateFunc(clientKey, f.FnName, f.XlsxName,
-		paramDeclarationsToMappings(f.InputMappings),
-		paramDeclarationsToMappings(f.OutputMappings)); err != nil {
+	if id, err = dao.CreateFunc(clientKey, f.FnName, f.XlsxFile,
+		paramDeclarationsToMappings(f.InputParams),
+		paramDeclarationsToMappings(f.OutputParams)); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	} else {

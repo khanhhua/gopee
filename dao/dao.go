@@ -155,3 +155,55 @@ func CreateFunc(clientKey string, fnName string, xlsxFile string,
 	}
 	return
 }
+
+// FindFuns Finds all the funs this client has
+func FindFuns(clientKey string) (result []FuncSpec, err error) {
+	CLEARDB_DATABASE_URL := os.Getenv("CLEARDB_DATABASE_URL")
+
+	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
+	if dberr != nil {
+		err = dberr
+		return
+	}
+	defer db.Close()
+
+	var rows *sql.Rows
+	rows, dberr = db.Query(`
+		SELECT id, fn_name, xlsx_file, input_mappings, output_mappings
+		FROM funs
+		WHERE client_id = (SELECT id FROM clients WHERE client_key = ?)`, clientKey)
+	if dberr != nil {
+		err = dberr
+		return
+	}
+
+	for rows.Next() {
+		row := FuncSpec{}
+		var rawInputMappings, rawOutputMappings string
+		dberr = rows.Scan(&row.ID, &row.FnName, &row.XlsxFile, &rawInputMappings, &rawOutputMappings)
+		if dberr != nil {
+			err = dberr
+			return
+		}
+
+		row.InputMappings = deserializeRawMapping(rawInputMappings)
+		row.OutputMappings = deserializeRawMapping(rawOutputMappings)
+
+		result = append(result, row)
+	}
+
+	return
+}
+
+func deserializeRawMapping(raw string) map[string]string {
+	ret := make(map[string]string)
+	if len(raw) == 0 {
+		return ret
+	}
+	for _, pair := range strings.Split(raw, ";") {
+		splat := strings.Split(pair, "=")
+		ret[splat[0]] = splat[1]
+	}
+
+	return ret
+}

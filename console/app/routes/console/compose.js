@@ -5,13 +5,13 @@ export default Route.extend({
     return {
       fnName: '',
       xlsxFile: '',
-      inputMappings: [
+      inputParams: [
         {
           name: '',
           address: ''
         }
       ],
-      outputMappings: [
+      outputParams: [
         {
           name: '',
           address: ''
@@ -23,25 +23,27 @@ export default Route.extend({
     save(model) {
       console.log(`Saving model:`, model)
       const fun = this.get('store').createRecord('fun', model);
-      fun.save();
+      fun.save().catch(err => {
+        fun.unloadRecord()
+      });
     },
     addInputMapping() {
-      this.currentModel.inputMappings.pushObject({
+      this.currentModel.inputParams.pushObject({
         name: '',
         address: ''
       });
     },
     removeInputMapping(nth) {
-      this.currentModel.inputMappings.removeAt(nth);
+      this.currentModel.inputParams.removeAt(nth);
     },
     addOutputMapping() {
-      this.currentModel.outputMappings.pushObject({
+      this.currentModel.outputParams.pushObject({
         name: '',
         address: ''
       });
     },
     removeOutputMapping(nth) {
-      this.currentModel.outputMappings.removeAt(nth);
+      this.currentModel.outputParams.removeAt(nth);
     },
   }
 });
