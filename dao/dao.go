@@ -132,7 +132,7 @@ func CreateFunc(clientKey string, fnName string, xlsxFile string,
 	serializedIM := strings.Join(im, ";")
 
 	om := make([]string, 0)
-	for key, value := range inputMappings {
+	for key, value := range outputMappings {
 		om = append(om, fmt.Sprintf("%s=%s", key, value))
 	}
 	serializedOM := strings.Join(om, ";")
