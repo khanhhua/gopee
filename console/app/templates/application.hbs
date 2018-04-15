@@ -8,9 +8,18 @@
   <a class="item">
     API Playground
   </a>
+  {{#if isLogin}}
+  <a class="item right" {{action "logout" }}>
+    Logout
+  </a>
+  {{else}}
+  <a class="item right" {{action "loginWithDropbox" }}>
+    Login with Dropbox
+  </a>
+  {{/if}}
 </div>
 <div class="ui main container">
   <div class="ui grid">
-  {{outlet}}
+    {{outlet}}
   </div>
 </div>

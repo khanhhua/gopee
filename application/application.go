@@ -1,8 +1,11 @@
 package application
 
 import (
+	"strings"
+	"context"
 	"net/http"
-
+	"github.com/Sirupsen/logrus"
+	"github.com/SermoDigital/jose/jws"
 	"github.com/carbocation/interpose"
 	gorilla_mux "github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -43,14 +46,35 @@ func (app *Application) mux() *gorilla_mux.Router {
 
 	router.Handle("/", http.HandlerFunc(handlers.GetHome)).Methods("GET")
 	router.Handle("/console", http.HandlerFunc(handlers.ViewConsole))
-	router.Handle("/api/call/{fnName}", http.HandlerFunc(handlers.Call))
+	router.Handle("/call/{fnName}", http.HandlerFunc(handlers.Call)).Methods("POST")
 
-	router.Handle("/api/funs", http.HandlerFunc(handlers.Get)).Methods("GET")
-	router.Handle("/api/funs/{id}", http.HandlerFunc(handlers.GetOne)).Methods("GET")
-	router.Handle("/api/funs/{id}", http.HandlerFunc(handlers.Edit)).Methods("PUT")
-	router.Handle("/api/funs", http.HandlerFunc(handlers.Compose)).Methods("POST")
-
+	router.Handle("/auth/token", http.HandlerFunc(handlers.GetToken)).Methods("POST")
 	router.Handle("/auth/dropbox", http.HandlerFunc(handlers.Authorize)).Methods("GET")
+
+	// API routes are protected
+	apiRouter := router.PathPrefix("/api").Subrouter()
+	apiRouter.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if jwt, err := jws.ParseJWTFromRequest(r); err != nil {
+				http.Error(w, "Authentication required", 403)
+			} else {
+				claims := jwt.Claims()
+				if sub, ok := claims.Subject(); ok != true {
+					http.Error(w, "Authentication required", 403)
+					return
+				} else {
+					logrus.Infoln("CLientKey: " + strings.Repeat("x", len(sub)))
+					ctx := context.WithValue(r.Context(), "x-client-key", sub)
+					next.ServeHTTP(w, r.WithContext(ctx))
+				}
+			}
+		})
+	})
+	apiRouter.Handle("/funs", http.HandlerFunc(handlers.Get)).Methods("GET")
+	apiRouter.Handle("/funs/{id}", http.HandlerFunc(handlers.GetOne)).Methods("GET")
+	apiRouter.Handle("/funs/{id}", http.HandlerFunc(handlers.Edit)).Methods("PUT")
+	apiRouter.Handle("/funs", http.HandlerFunc(handlers.Compose)).Methods("POST")
+
 	// Path of static files must be last!
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 
