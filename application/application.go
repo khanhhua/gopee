@@ -44,7 +44,10 @@ func (app *Application) mux() *gorilla_mux.Router {
 	router.Handle("/", http.HandlerFunc(handlers.GetHome)).Methods("GET")
 	router.Handle("/console", http.HandlerFunc(handlers.ViewConsole))
 	router.Handle("/api/call/{fnName}", http.HandlerFunc(handlers.Call))
+
 	router.Handle("/api/funs", http.HandlerFunc(handlers.Get)).Methods("GET")
+	router.Handle("/api/funs/{id}", http.HandlerFunc(handlers.GetOne)).Methods("GET")
+	router.Handle("/api/funs/{id}", http.HandlerFunc(handlers.Edit)).Methods("PUT")
 	router.Handle("/api/funs", http.HandlerFunc(handlers.Compose)).Methods("POST")
 
 	router.Handle("/auth/dropbox", http.HandlerFunc(handlers.Authorize)).Methods("GET")

@@ -59,6 +59,41 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetOne Query for one function
+func GetOne(w http.ResponseWriter, r *http.Request) {
+	clientKey := r.Header.Get("x-client-key")
+	if len(clientKey) == 0 {
+		http.Error(w, "Not authorized", 403)
+		return
+	}
+	var err error
+	var id int64
+	if id, err = strconv.ParseInt(mux.Vars(r)["id"], 10, 64); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	var f dao.FuncSpec
+	if f, err = dao.GetFunc(clientKey, id); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	} else {
+		var payload struct {
+			Fun fun `json:"fun"`
+		}
+		payload.Fun.ID = f.ID
+		payload.Fun.FnName = f.FnName
+		payload.Fun.XlsxFile = f.XlsxFile
+		payload.Fun.InputParams = mappingsToParamDeclarations(f.InputMappings)
+		payload.Fun.OutputParams = mappingsToParamDeclarations(f.OutputMappings)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(payload)
+	}
+}
+
 // Compose composes function
 func Compose(w http.ResponseWriter, r *http.Request) {
 	var err error
@@ -99,6 +134,61 @@ func Compose(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(payload)
 }
 
+func Edit(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var data []byte
+	clientKey := r.Header.Get("x-client-key")
+	if len(clientKey) == 0 {
+		http.Error(w, "Not authorized", 403)
+		return
+	}
+
+	if data, err = ioutil.ReadAll(r.Body); err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	var id int64
+	if id, err = strconv.ParseInt(mux.Vars(r)["id"], 10, 64); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	var f dao.FuncSpec
+
+	if f, err = dao.GetFunc(clientKey, id); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	} else {
+		var payload struct {
+			Fun fun `json:"fun"`
+		}
+		if err = json.Unmarshal(data, &payload); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		payload.Fun.ID = id
+		f.FnName = payload.Fun.FnName
+		f.XlsxFile = payload.Fun.XlsxFile
+		f.InputMappings = paramDeclarationsToMappings(payload.Fun.InputParams)
+		f.OutputMappings = paramDeclarationsToMappings(payload.Fun.OutputParams)
+
+		if err = dao.UpdateFunc(clientKey, f); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(payload)
+	}
+}
+
 func paramDeclarationsToMappings(params []param) map[string]string {
 	ret := make(map[string]string)
 	for _, p := range params {
@@ -106,6 +196,16 @@ func paramDeclarationsToMappings(params []param) map[string]string {
 	}
 
 	return ret
+}
+
+func mappingsToParamDeclarations(mappings map[string]string) (params []param) {
+	for key, value := range mappings {
+		params = append(params, param{
+			Name:    key,
+			Address: value,
+		})
+	}
+	return
 }
 
 // Call calls a precomposed function

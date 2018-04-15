@@ -8,6 +8,7 @@ const Router = EmberRouter.extend({
 
 Router.map(function() {
   this.route('console', function() {
+    this.route('edit', { path: 'compose/:id' });
     this.route('compose');
   });
 });
