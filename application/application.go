@@ -44,8 +44,8 @@ func (app *Application) MiddlewareStruct() (*interpose.Middleware, error) {
 func (app *Application) mux() *gorilla_mux.Router {
 	router := gorilla_mux.NewRouter()
 
-	router.Handle("/", http.HandlerFunc(handlers.GetHome)).Methods("GET")
-	router.Handle("/console", http.HandlerFunc(handlers.ViewConsole))
+	router.Handle("/home", http.HandlerFunc(handlers.GetHome)).Methods("GET")
+	// router.Handle("/console", http.HandlerFunc(handlers.ViewConsole))
 	router.Handle("/call/{fnName}", http.HandlerFunc(handlers.Call)).Methods("POST")
 
 	router.Handle("/auth/token", http.HandlerFunc(handlers.GetToken)).Methods("POST")
@@ -76,7 +76,16 @@ func (app *Application) mux() *gorilla_mux.Router {
 	apiRouter.Handle("/funs", http.HandlerFunc(handlers.Compose)).Methods("POST")
 
 	// Path of static files must be last!
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
+	router.PathPrefix("/assets").Handler(http.FileServer(http.Dir("static/console")))
+	router.PathPrefix("/").HandlerFunc(indexHandler("static/console/index.html"))
 
 	return router
+}
+
+func indexHandler(entrypoint string) func(w http.ResponseWriter, r *http.Request) {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, entrypoint)
+	}
+
+	return http.HandlerFunc(fn)
 }
