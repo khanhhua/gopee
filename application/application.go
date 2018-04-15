@@ -45,6 +45,7 @@ func (app *Application) mux() *gorilla_mux.Router {
 	router.Handle("/console", http.HandlerFunc(handlers.ViewConsole))
 	router.Handle("/api/call/{fnName}", http.HandlerFunc(handlers.Call))
 
+	router.Handle("/api/token", http.HandlerFunc(handlers.GetToken)).Methods("POST")
 	router.Handle("/api/funs", http.HandlerFunc(handlers.Get)).Methods("GET")
 	router.Handle("/api/funs/{id}", http.HandlerFunc(handlers.GetOne)).Methods("GET")
 	router.Handle("/api/funs/{id}", http.HandlerFunc(handlers.Edit)).Methods("PUT")
