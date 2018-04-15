@@ -1,0 +1,19 @@
+<div class="sixteen wide column">
+  <h2>Functions</h2>
+  <table class="ui celled table">
+    <thead>
+      <tr><th>Function</th>
+      <th>XLSX File</th>
+      <th>Status</th>
+    </tr></thead>
+    <tbody>
+      {{#each model as |fun|}}
+      <tr>
+        <td>{{fun.fnName}}</td>
+        <td>{{fun.xlsxFile}}</td>
+        <td>Unknown</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,16 @@
+<div class="ui menu">
+  {{#link-to "console.index" class="item"}}
+    Home
+  {{/link-to}}
+  {{#link-to "console.compose" class="item"}}
+    Compose
+  {{/link-to}}
+  <a class="item">
+    API Playground
+  </a>
+</div>
+<div class="ui main container">
+  <div class="ui grid">
+  {{outlet}}
+  </div>
+</div>

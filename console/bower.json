@@ -1,0 +1,8 @@
+{
+  "name": "console",
+  "dependencies": {
+    "moment": "^2.22.0",
+    "pikaday": "^1.6.1",
+    "semantic": "^2.3.1"
+  }
+}
