@@ -11,9 +11,9 @@ export default Route.extend({
         data: JSON.stringify({
           code
         })
-      }).promise().then(UID => {
-        window.localStorage.setItem('x-client-key', UID)
-        return true;
+      }).promise().then(token => {
+        window.localStorage.setItem('accesstoken', token)
+        window.location.href = window.location.origin + '/console';
       }).catch(err => {
         transition.abort();
       });

@@ -1,5 +1,5 @@
-hash: ddbbb36984b4e94ae70ae7481a2b963025e77befb4aaf118ac13273d8a80ddf8
-updated: 2018-04-08T07:53:13.097478+08:00
+hash: b525ab214e8c699619bbb5b5db0564c86a7b94ddf19d390df24259cc8465704c
+updated: 2018-04-15T20:27:19.712158+08:00
 imports:
 - name: github.com/carbocation/interpose
   version: 723534742ba3bbda66268b735aaa41634468acc6
@@ -58,6 +58,8 @@ imports:
   version: 00c29f56e2386353d58c599509e8dc3801b0d716
 - name: github.com/pelletier/go-toml
   version: 66540cf1fcd2c3aee6f6787dfa32a6ae9a870f12
+- name: github.com/SermoDigital/jose
+  version: f6df55f235c24f236d11dbcf665249a59ac2021f
 - name: github.com/Sirupsen/logrus
   version: 90150a8ed11b6ce285e77e8af2b0109559ce4777
 - name: github.com/spf13/afero

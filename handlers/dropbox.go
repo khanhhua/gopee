@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -8,7 +9,10 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
+	"github.com/SermoDigital/jose/crypto"
+	"github.com/SermoDigital/jose/jws"
 	"github.com/khanhhua/gopee/dao"
 )
 
@@ -108,15 +112,25 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 			ClientDomain:       "",
 			DropboxAccountID:   response.AccountID,
 			DropboxAccessToken: response.AccessToken}
-		if client, err = dao.CreateClient(client); err != nil {
+		if _, err = dao.CreateClient(client); err != nil {
 			fmt.Printf("Error: %v", err)
 			http.Error(w, "Database error", 500)
 			return
 		}
 
-		// TODO JWT tokenize instead of the UID plainly
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(response.UID)
+		claims := jws.Claims{
+			"sub": response.UID,
+			"exp": time.Now().Add(time.Minute * 30).Unix()}
+		token := jws.NewJWT(claims, crypto.SigningMethodHS256)
+		key, _ := base64.StdEncoding.DecodeString(os.Getenv("JWT_KEY"))
+		if tokenSigned, jwtErr := token.Serialize(key); jwtErr != nil {
+			fmt.Printf("Error: %v", jwtErr)
+			http.Error(w, "JWT error", 500)
+			return
+		} else {
+			w.Header().Set("Content-Type", "text/plain")
+			w.Write(tokenSigned)
+		}
 	}
 }
 
