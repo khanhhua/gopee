@@ -32,7 +32,7 @@ type fun struct {
 
 // Get Query for functions
 func Get(w http.ResponseWriter, r *http.Request) {
-	clientKey := r.Header.Get("x-client-key")
+	clientKey := r.Context().Value("x-client-key").(string)
 	if len(clientKey) == 0 {
 		http.Error(w, "Not authorized", 403)
 		return
@@ -61,7 +61,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 
 // GetOne Query for one function
 func GetOne(w http.ResponseWriter, r *http.Request) {
-	clientKey := r.Header.Get("x-client-key")
+	clientKey := r.Context().Value("x-client-key").(string)
 	if len(clientKey) == 0 {
 		http.Error(w, "Not authorized", 403)
 		return
@@ -98,7 +98,7 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 func Compose(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var data []byte
-	clientKey := r.Header.Get("x-client-key")
+	clientKey := r.Context().Value("x-client-key").(string)
 	if len(clientKey) == 0 {
 		http.Error(w, "Not authorized", 403)
 		return
@@ -137,7 +137,7 @@ func Compose(w http.ResponseWriter, r *http.Request) {
 func Edit(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var data []byte
-	clientKey := r.Header.Get("x-client-key")
+	clientKey := r.Context().Value("x-client-key").(string)
 	if len(clientKey) == 0 {
 		http.Error(w, "Not authorized", 403)
 		return
@@ -210,7 +210,7 @@ func mappingsToParamDeclarations(mappings map[string]string) (params []param) {
 
 // Call calls a precomposed function
 func Call(w http.ResponseWriter, r *http.Request) {
-	clientKey := r.Header.Get("x-client-key")
+	clientKey := r.Context().Value("x-client-key").(string)
 	if len(clientKey) == 0 {
 		http.Error(w, "Not authorized", 403)
 		return

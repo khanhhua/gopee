@@ -5,7 +5,7 @@ export default Route.extend({
   beforeModel(transition) {
     const { code } = transition.queryParams;
     if (code) {
-      return Ember.$.ajax('/api/token', {
+      return Ember.$.ajax('/auth/token', {
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({

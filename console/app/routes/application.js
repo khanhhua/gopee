@@ -7,6 +7,10 @@ export default Route.extend({
         'client_id=j4365xi2ynl3zri'+
         '&response_type=code'+
         '&redirect_uri=' + window.location.origin + '/console', '_blank');
+    },
+    logout() {
+      window.localStorage.removeItem('accesstoken');
+      window.location.href = window.location.origin + '/'
     }
   }
 });
