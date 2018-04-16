@@ -5,9 +5,9 @@
   {{#link-to "console.compose" class="item"}}
     Compose
   {{/link-to}}
-  <a class="item">
+  {{#link-to "playground" class="item"}}
     API Playground
-  </a>
+  {{/link-to}}
   {{#if isLogin}}
   <a class="item right" {{action "logout" }}>
     Logout

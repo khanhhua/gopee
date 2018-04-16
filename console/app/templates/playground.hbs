@@ -1,0 +1,58 @@
+<div class="sixteen wide column">
+  <h2>Playground</h2>
+</div>
+
+<div class="six wide column">
+  <div class="ui relaxed divided list">
+    {{#each model as |fun|}}
+    <div class="item">
+      <i class="large github middle aligned icon"></i>
+      <div class="content">
+        <a class="header" {{action "selectFun" fun}}>{{fun.fnName}}</a>
+        <div class="description">{{fun.xlsxFile}}</div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
+
+<div class="ten wide column">
+  {{#if fun}}
+  <h4>{{fun.fnName}}</h4>
+  <div class="ui form {{if isLoading "loading"}}">
+    <div class="field">
+      <label>Input parameters</label>
+      {{#each actualInputParams as |mapping index| }}
+        <div class="inline fields">
+          <div class="eight wide field">
+            <label>API name</label>
+            {{input readonly=true value=mapping.name type="text" placeholder="family"}}
+          </div>
+          <div class="seven wide field">
+            {{input value=mapping.value type="text" placeholder="10"}}
+          </div>
+          <div class="one wide field">
+            {{ui-checkbox label="Enabled" checked=checked}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+    <div class="field">
+      <button class="ui primary button" {{action "callFunction"}}>Send</button>
+    </div>
+    <div class="field">
+      <label>Response</label>
+      {{#if funOutput}}
+      <div class="ui visible message">
+        <output class="json-output">{{{funOutput}}}</output>
+      </div>
+      {{else}}
+        <div class="ui info visible message">
+          <p>Click send for function output</p>
+        </div>
+      {{/if}}
+
+    </div>
+  </div>
+  {{/if}}
+</div>
