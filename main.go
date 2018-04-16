@@ -14,14 +14,10 @@ import (
 
 func newConfig() (*viper.Viper, error) {
 	c := viper.New()
-	c.SetDefault("cookie_secret", "9e9DMq498fJOA2MB")
 	c.SetDefault("port", "8888")
 	c.SetDefault("http_cert_file", "")
 	c.SetDefault("http_key_file", "")
 	c.SetDefault("http_drain_interval", "1s")
-
-	c.SetDefault("dropbox_apikey", "j4365xi2ynl3zri")
-	c.SetDefault("dropbox_secret", "7e9j352ahi7hu8v")
 
 	c.AutomaticEnv()
 
