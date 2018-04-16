@@ -1,16 +1,19 @@
 package application
 
 import (
-	"strings"
 	"context"
+	"fmt"
 	"net/http"
-	"github.com/Sirupsen/logrus"
+	"strings"
+
 	"github.com/SermoDigital/jose/jws"
+	"github.com/Sirupsen/logrus"
 	"github.com/carbocation/interpose"
 	gorilla_mux "github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/spf13/viper"
 
+	"github.com/khanhhua/gopee/dao"
 	"github.com/khanhhua/gopee/handlers"
 	"github.com/khanhhua/gopee/middlewares"
 )
@@ -22,6 +25,11 @@ func New(config *viper.Viper) (*Application, error) {
 	app := &Application{}
 	app.config = config
 	app.sessionStore = sessions.NewCookieStore([]byte(cookieStoreSecret))
+	if dao, dberr := dao.New(config.Get("CLEARDB_DATABASE_URL").(string)); dberr != nil {
+		return nil, fmt.Errorf("Database connection failed")
+	} else {
+		app.dao = dao
+	}
 
 	return app, nil
 }
@@ -29,13 +37,20 @@ func New(config *viper.Viper) (*Application, error) {
 // Application is the application object that runs HTTP server.
 type Application struct {
 	config       *viper.Viper
+	dao          *dao.DAO
 	sessionStore sessions.Store
 }
 
 func (app *Application) MiddlewareStruct() (*interpose.Middleware, error) {
 	middle := interpose.New()
 	middle.Use(middlewares.SetSessionStore(app.sessionStore))
+	middle.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			req = req.WithContext(context.WithValue(req.Context(), "dao", app.dao))
 
+			next.ServeHTTP(res, req)
+		})
+	})
 	middle.UseHandler(app.mux())
 
 	return middle, nil
