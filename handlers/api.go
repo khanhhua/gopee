@@ -217,7 +217,7 @@ func mappingsToParamDeclarations(mappings map[string]string) (params []param) {
 
 // Call calls a precomposed function
 func Call(w http.ResponseWriter, r *http.Request) {
-	clientKey := r.Context().Value("x-client-key").(string)
+	clientKey := r.Header.Get("x-client-key")
 	if len(clientKey) == 0 {
 		http.Error(w, "Not authorized", 403)
 		return
@@ -261,6 +261,7 @@ func Call(w http.ResponseWriter, r *http.Request) {
 
 			return
 		} else {
+			w.Header().Set("Content-Type", "application/json")
 			encoder := json.NewEncoder(w)
 			encoder.Encode(outputs)
 		}

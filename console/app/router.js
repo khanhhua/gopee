@@ -11,6 +11,7 @@ Router.map(function() {
     this.route('edit', { path: 'compose/:id' });
     this.route('compose');
   });
+  this.route('playground', { path: 'console/playground' });
 });
 
 export default Router;
