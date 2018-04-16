@@ -18,7 +18,15 @@ func TestCreateFunc(t *testing.T) {
 		"subtotal": "Input!B10",
 		"total":    "Input!B11",
 	}
-	if id, err := CreateFunc("91931784", "testFun", "testFile.xlsx",
+
+	var daoInstance *DAO
+	var dberr error
+	if daoInstance, dberr = New(os.Getenv("CLEARDB_DATABASE_URL")); dberr != nil {
+		t.Error("Database connection failed")
+		return
+	}
+
+	if id, err := daoInstance.CreateFunc("91931784", "testFun", "testFile.xlsx",
 		inputMappings, outputMappings); err != nil {
 		t.Errorf("Could not create function. Reason: %v", err)
 	} else if id < 0 {

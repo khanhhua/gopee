@@ -64,7 +64,8 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 			ClientDomain:       "",
 			DropboxAccountID:   response.AccountID,
 			DropboxAccessToken: response.AccessToken}
-		if client, err = dao.CreateClient(client); err != nil {
+		daoInstance := r.Context().Value("dao").(*dao.DAO)
+		if client, err = daoInstance.CreateClient(client); err != nil {
 			fmt.Printf("Error: %v", err)
 			http.Error(w, "Database error", 500)
 			return
@@ -112,7 +113,9 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 			ClientDomain:       "",
 			DropboxAccountID:   response.AccountID,
 			DropboxAccessToken: response.AccessToken}
-		if _, err = dao.CreateClient(client); err != nil {
+
+		daoInstance := r.Context().Value("dao").(*dao.DAO)
+		if _, err = daoInstance.CreateClient(client); err != nil {
 			fmt.Printf("Error: %v", err)
 			http.Error(w, "Database error", 500)
 			return

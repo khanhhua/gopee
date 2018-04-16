@@ -38,7 +38,8 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if funs, err := dao.FindFuns(clientKey); err != nil {
+	daoInstance := r.Context().Value("dao").(*dao.DAO)
+	if funs, err := daoInstance.FindFuns(clientKey); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	} else {
@@ -73,8 +74,10 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+
+	daoInstance := r.Context().Value("dao").(*dao.DAO)
 	var f dao.FuncSpec
-	if f, err = dao.GetFunc(clientKey, id); err != nil {
+	if f, err = daoInstance.GetFunc(clientKey, id); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
@@ -120,7 +123,9 @@ func Compose(w http.ResponseWriter, r *http.Request) {
 
 	var id int64
 	f := payload.Fun
-	if id, err = dao.CreateFunc(clientKey, f.FnName, f.XlsxFile,
+	daoInstance := r.Context().Value("dao").(*dao.DAO)
+
+	if id, err = daoInstance.CreateFunc(clientKey, f.FnName, f.XlsxFile,
 		paramDeclarationsToMappings(f.InputParams),
 		paramDeclarationsToMappings(f.OutputParams)); err != nil {
 		http.Error(w, err.Error(), 500)
@@ -156,8 +161,9 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var f dao.FuncSpec
+	daoInstance := r.Context().Value("dao").(*dao.DAO)
 
-	if f, err = dao.GetFunc(clientKey, id); err != nil {
+	if f, err = daoInstance.GetFunc(clientKey, id); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
@@ -177,7 +183,8 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		f.InputMappings = paramDeclarationsToMappings(payload.Fun.InputParams)
 		f.OutputMappings = paramDeclarationsToMappings(payload.Fun.OutputParams)
 
-		if err = dao.UpdateFunc(clientKey, f); err != nil {
+		daoInstance := r.Context().Value("dao").(*dao.DAO)
+		if err = daoInstance.UpdateFunc(clientKey, f); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
@@ -222,8 +229,9 @@ func Call(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	daoInstance := r.Context().Value("dao").(*dao.DAO)
 	var rawInputs map[string]interface{}
-	if fun, err := dao.GetFuncByName(clientKey, fnName); err != nil {
+	if fun, err := daoInstance.GetFuncByName(clientKey, fnName); err != nil {
 		fmt.Printf("Function '%s' not found:", fnName)
 		http.Error(w, "Bad request", 404)
 		return

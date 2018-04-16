@@ -3,11 +3,16 @@ package dao
 import (
 	"database/sql"
 	"fmt"
-	"os"
+	"io"
 	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 )
+
+type DAO struct {
+	io.Closer
+	db *sql.DB
+}
 
 type Client struct {
 	ID                 int64
@@ -27,16 +32,27 @@ type FuncSpec struct {
 	OutputMappings     map[string]string
 }
 
-// CreateClient Persists a new client
-func CreateClient(client Client) (ret Client, err error) {
-	CLEARDB_DATABASE_URL := os.Getenv("CLEARDB_DATABASE_URL")
-
-	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
+func New(url string) (instance *DAO, err error) {
+	db, dberr := sql.Open("mysql", url)
 	if dberr != nil {
 		err = dberr
 		return
 	}
-	defer db.Close()
+
+	instance = &DAO{
+		db: db,
+	}
+	return
+}
+
+func (instance *DAO) Close() error {
+	return instance.db.Close()
+}
+
+// CreateClient Persists a new client
+func (instance *DAO) CreateClient(client Client) (ret Client, err error) {
+	db := instance.db
+	var dberr error
 	// Insert into table clients and return the latest ID
 	var result sql.Result
 	row := db.QueryRow(`SELECT id FROM clients where client_key = ?`, client.ClientKey)
@@ -72,15 +88,8 @@ func CreateClient(client Client) (ret Client, err error) {
 }
 
 // GetFuncByName Gets function by name
-func GetFuncByName(clientKey string, fnName string) (ret FuncSpec, err error) {
-	CLEARDB_DATABASE_URL := os.Getenv("CLEARDB_DATABASE_URL")
-
-	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
-	if dberr != nil {
-		err = dberr
-		return
-	}
-	defer db.Close()
+func (instance *DAO) GetFuncByName(clientKey string, fnName string) (ret FuncSpec, err error) {
+	db := instance.db
 
 	var row *sql.Row
 	row = db.QueryRow(`SELECT xlsx_file, dropbox_account_id, dropbox_access_token,
@@ -98,44 +107,20 @@ func GetFuncByName(clientKey string, fnName string) (ret FuncSpec, err error) {
 	}
 	ret.FnName = fnName
 
-	ret.InputMappings = make(map[string]string)
-	for _, pair := range strings.Split(inputMappingsRaw, ";") {
-		splat := strings.Split(pair, "=")
-		ret.InputMappings[splat[0]] = splat[1]
-	}
-
-	ret.OutputMappings = make(map[string]string)
-	for _, pair := range strings.Split(outputMappingsRaw, ";") {
-		splat := strings.Split(pair, "=")
-		ret.OutputMappings[splat[0]] = splat[1]
-	}
+	ret.InputMappings = deserializeRawMapping(inputMappingsRaw)
+	ret.OutputMappings = deserializeRawMapping(outputMappingsRaw)
 
 	return
 }
 
 // CreateFunc Register a new function named fnName
-func CreateFunc(clientKey string, fnName string, xlsxFile string,
+func (instance *DAO) CreateFunc(clientKey string, fnName string, xlsxFile string,
 	inputMappings map[string]string, outputMappings map[string]string) (id int64, err error) {
-	CLEARDB_DATABASE_URL := os.Getenv("CLEARDB_DATABASE_URL")
+	db := instance.db
+	var dberr error
 
-	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
-	if dberr != nil {
-		err = dberr
-		return
-	}
-	defer db.Close()
-
-	im := make([]string, 0)
-	for key, value := range inputMappings {
-		im = append(im, fmt.Sprintf("%s=%s", key, value))
-	}
-	serializedIM := strings.Join(im, ";")
-
-	om := make([]string, 0)
-	for key, value := range outputMappings {
-		om = append(om, fmt.Sprintf("%s=%s", key, value))
-	}
-	serializedOM := strings.Join(om, ";")
+	serializedIM := serializeMapping(inputMappings)
+	serializedOM := serializeMapping(outputMappings)
 
 	var result sql.Result
 
@@ -157,15 +142,9 @@ func CreateFunc(clientKey string, fnName string, xlsxFile string,
 }
 
 // FindFuns Finds all the funs this client has
-func FindFuns(clientKey string) (result []FuncSpec, err error) {
-	CLEARDB_DATABASE_URL := os.Getenv("CLEARDB_DATABASE_URL")
-
-	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
-	if dberr != nil {
-		err = dberr
-		return
-	}
-	defer db.Close()
+func (instance *DAO) FindFuns(clientKey string) (result []FuncSpec, err error) {
+	db := instance.db
+	var dberr error
 
 	var rows *sql.Rows
 	rows, dberr = db.Query(`
@@ -176,6 +155,7 @@ func FindFuns(clientKey string) (result []FuncSpec, err error) {
 		err = dberr
 		return
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		row := FuncSpec{}
@@ -195,15 +175,9 @@ func FindFuns(clientKey string) (result []FuncSpec, err error) {
 	return
 }
 
-func GetFunc(clientKey string, id int64) (result FuncSpec, err error) {
-	CLEARDB_DATABASE_URL := os.Getenv("CLEARDB_DATABASE_URL")
-
-	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
-	if dberr != nil {
-		err = dberr
-		return
-	}
-	defer db.Close()
+func (instance *DAO) GetFunc(clientKey string, id int64) (result FuncSpec, err error) {
+	db := instance.db
+	var dberr error
 
 	var row *sql.Row
 	row = db.QueryRow(`
@@ -224,22 +198,17 @@ func GetFunc(clientKey string, id int64) (result FuncSpec, err error) {
 	return
 }
 
-func UpdateFunc(clientKey string, fun FuncSpec) error {
-	CLEARDB_DATABASE_URL := os.Getenv("CLEARDB_DATABASE_URL")
+func (instance *DAO) UpdateFunc(clientKey string, fun FuncSpec) error {
+	db := instance.db
+	var dberr error
 
-	db, dberr := sql.Open("mysql", CLEARDB_DATABASE_URL)
-	if dberr != nil {
-		return dberr
-	}
-	defer db.Close()
-
-	if _, dberror := db.Exec(`
+	if _, dberr = db.Exec(`
 		UPDATE funs
 		SET fn_name=?, xlsx_file=?, input_mappings=?, output_mappings=?
-		WHERE client_id=(SELECT id FROM clients WHERE client_key = ?) 
+		WHERE client_id=(SELECT id FROM clients WHERE client_key = ?)
 		 AND id = ?
 	`, fun.FnName, fun.XlsxFile, serializeMapping(fun.InputMappings),
-		serializeMapping(fun.OutputMappings), clientKey, fun.ID); dberror != nil {
+		serializeMapping(fun.OutputMappings), clientKey, fun.ID); dberr != nil {
 		return dberr
 	}
 
