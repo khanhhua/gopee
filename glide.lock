@@ -1,5 +1,5 @@
-hash: b525ab214e8c699619bbb5b5db0564c86a7b94ddf19d390df24259cc8465704c
-updated: 2018-04-15T20:27:19.712158+08:00
+hash: c67423584bfdf03a7185faf04c629075aa658698f1b72137c5682cca6caf360e
+updated: 2018-05-10T00:17:16.973293+08:00
 imports:
 - name: github.com/carbocation/interpose
   version: 723534742ba3bbda66268b735aaa41634468acc6
@@ -19,7 +19,7 @@ imports:
   subpackages:
   - stack
 - name: github.com/golang/protobuf
-  version: e09c5db296004fbe3f74490e84dcd62c3c5ddb1b
+  version: b4deda0973fb4c70b50d226b1af49f3da59f5265
   subpackages:
   - proto
 - name: github.com/gorilla/context
@@ -47,7 +47,7 @@ imports:
   subpackages:
   - reflectx
 - name: github.com/khanhhua/formula1
-  version: 053156d14bb3b301278520e4d9be925987cf4b32
+  version: ad994112db8a55b401dc78b47d4e149e66801d3f
   subpackages:
   - engine
   - formula
@@ -60,6 +60,10 @@ imports:
   version: 66540cf1fcd2c3aee6f6787dfa32a6ae9a870f12
 - name: github.com/SermoDigital/jose
   version: f6df55f235c24f236d11dbcf665249a59ac2021f
+  subpackages:
+  - crypto
+  - jws
+  - jwt
 - name: github.com/Sirupsen/logrus
   version: 90150a8ed11b6ce285e77e8af2b0109559ce4777
 - name: github.com/spf13/afero
@@ -85,12 +89,12 @@ imports:
   subpackages:
   - ssh/terminal
 - name: golang.org/x/net
-  version: 61147c48b25b599e5b561d2e9c4f3e1ef489ca41
+  version: f73e4c9ed3b7ebdd5f699a16a880c2b1994e50dd
   subpackages:
   - context
   - context/ctxhttp
 - name: golang.org/x/oauth2
-  version: 921ae394b9430ed4fb549668d7b087601bd60a81
+  version: cdc340f7c179dbbfa4afd43b7614e8fcadde4269
   subpackages:
   - internal
 - name: golang.org/x/sys
@@ -104,7 +108,7 @@ imports:
   - transform
   - unicode/norm
 - name: google.golang.org/appengine
-  version: 0a24098c0ec68416ec050f567f75df563d6b231e
+  version: 962cbd1200af94a5a35ba8d512e9f91271b4d01a
   subpackages:
   - internal
   - internal/base

@@ -295,16 +295,16 @@ func execute(fun dao.FuncSpec, inputs map[string]string) (outputs map[string]str
 			mappedInputs[address] = inputs[param]
 		}
 
-		mappedOutputs := make(map[string]string)
+		mappedOutputs := make(map[string]f1Engine.OutParam)
 		for _, address := range fun.OutputMappings {
-			mappedOutputs[address] = ""
+			mappedOutputs[address] = f1Engine.NewOutParam("")
 		}
 
 		engine := f1Engine.NewEngine(xlFile)
 		if err = engine.Execute(mappedInputs, &mappedOutputs); err == nil {
 			outputs = make(map[string]string)
 			for param, address := range fun.OutputMappings {
-				outputs[param] = mappedOutputs[address]
+				outputs[param] = fmt.Sprintf("%v", mappedOutputs[address].Value)
 			}
 		}
 	}

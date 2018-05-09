@@ -35,7 +35,7 @@ import:
   subpackages:
   - reflectx
 - package: github.com/khanhhua/formula1
-  version: 053156d14bb3b301278520e4d9be925987cf4b32
+  version: v1.0.5
   subpackages:
   - engine
   - formula
