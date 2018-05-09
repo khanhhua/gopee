@@ -8,10 +8,12 @@ const Router = EmberRouter.extend({
 
 Router.map(function() {
   this.route('console', function() {
+    this.route('index', { path: '/' });
     this.route('edit', { path: 'compose/:id' });
     this.route('compose');
   });
   this.route('playground', { path: 'console/playground' });
+  this.route('blog', { path: '/' });
 });
 
 export default Router;
